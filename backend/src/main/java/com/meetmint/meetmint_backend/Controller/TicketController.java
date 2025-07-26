@@ -6,19 +6,28 @@ import com.meetmint.meetmint_backend.Dto.TicketResponseDto;
 import com.meetmint.meetmint_backend.Service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/api/ticket")
 @RequiredArgsConstructor
 public class TicketController {
 
     private final TicketService ticketService;
-    @PostMapping("/create")
+
+    @PostMapping
     public ResponseEntity<ApiResponseDTO<?>> createTicket(@RequestBody TicketRequestDto ticketRequestDto){
        return ticketService.createTicket(ticketRequestDto);
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponseDTO<?>> getTicketById(@PathVariable Long id){
+        return ticketService.getTicketById(id);
+    }
+
+    @GetMapping
+    public  ResponseEntity<ApiResponseDTO<?>> getAllTickets()
+    {
+        return ticketService.getAllTicket();
     }
 }

@@ -11,6 +11,11 @@ import com.meetmint.meetmint_backend.Service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 
@@ -32,6 +37,13 @@ public class TicketServiceImpl implements TicketService {
         Event event = eventRepository.findById(ticketRequestDto.getEventId())
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
+        if(Objects.equals(event.getTicketCount(), event.getTicketBooked())) {
+            ApiResponseDTO<Ticket> apiResponseDTO = ApiResponseDTO.<Ticket>builder()
+                    .success(false)
+                    .message("No Available Tickets")
+                    .build();
+            return ResponseEntity.ok(apiResponseDTO);
+        }
         User user = userRepository.findById(ticketRequestDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -43,9 +55,13 @@ public class TicketServiceImpl implements TicketService {
                 .ticketPrice(ticketRequestDto.getTicketPrice())
                 .startTime(ticketRequestDto.getStartTime())
                 .endTime(ticketRequestDto.getEndTime())
+                .eventTitle(ticketRequestDto.getEventTitle())
                 .build();
 
         ticketRepository.save(ticket);
+        event.setTicketBooked(event.getTicketBooked()+1);
+        eventRepository.save(event);
+
         ApiResponseDTO<Ticket>apiResponseDTO= ApiResponseDTO.<Ticket>builder()
                 .success(true)
                 .message("Ticket Created Successfully")
@@ -55,17 +71,47 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public ResponseEntity<ApiResponseDTO<?>> getTicketById(UserRequestDto emailAndPassword) {
-        return null;
+    public ResponseEntity<ApiResponseDTO<?>> getTicketById(@PathVariable Long id) {
+
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+        ApiResponseDTO<Ticket> apiResponseDTO = ApiResponseDTO.<Ticket>builder()
+                .success(true)
+                .message("Ticket fetched successfully")
+                .data(ticket)
+                .build();
+
+        return ResponseEntity.ok(apiResponseDTO);
     }
 
     @Override
-    public ResponseEntity<ApiResponseDTO<?>> updateTicketById(Long id, UserRequestDto userRequestDto, String authHeader) {
-        return null;
+    public ResponseEntity<ApiResponseDTO<?>> getAllTicket() {
+        try
+        {
+            Ticket ticket = (Ticket) ticketRepository.findAll();
+
+            ApiResponseDTO<Ticket>apiResponseDTO=ApiResponseDTO.<Ticket>builder()
+                    .message("ticket fetch successfully")
+                    .success(true)
+                    .data(ticket)
+                    .build();
+            return ResponseEntity.ok().body(apiResponseDTO);
+        }catch (Exception exception){
+            ApiResponseDTO<String> apiResponseDTO=ApiResponseDTO.<String>builder()
+                    .message("something wents wrong")
+                    .success(false)
+                    .build();
+            return ResponseEntity.status(503).body(apiResponseDTO);
+        }
+
+
+
+
+
     }
 
     @Override
-    public ResponseEntity<ApiResponseDTO<?>> deleteTicketById(Long id) {
+    public ResponseEntity<ApiResponseDTO<?>> getTicketByEmail(String email) {
         return null;
     }
 

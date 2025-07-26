@@ -11,9 +11,11 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 public interface TicketService {
     ResponseEntity<ApiResponseDTO<?>> createTicket(TicketRequestDto ticketRequestDto);
-    ResponseEntity<ApiResponseDTO<?>> getTicketById(UserRequestDto emailAndPassword);
-    ResponseEntity<ApiResponseDTO<?>> updateTicketById(Long id, UserRequestDto userRequestDto,String authHeader);
-    ResponseEntity<ApiResponseDTO<?>> deleteTicketById(Long id);
+    ResponseEntity<ApiResponseDTO<?>> getTicketById(@PathVariable Long id );
+    ResponseEntity<ApiResponseDTO<?>> getAllTicket();
+    ResponseEntity<ApiResponseDTO<?>> getTicketByEmail(String email);
+    //    ResponseEntity<ApiResponseDTO<?>> updateTicketById(Long id, TicketRequestDto ticketRequestDto,String authHeader);
+//    ResponseEntity<ApiResponseDTO<?>> deleteTicketById(Long id);
 
 }
 

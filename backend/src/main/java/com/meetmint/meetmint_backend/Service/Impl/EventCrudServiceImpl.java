@@ -66,6 +66,8 @@ public class EventCrudServiceImpl implements EventCrudService {
         List<EventResponseDto> events= eventRepository.findAll().stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+
+
         ApiResponseDTO<List<EventResponseDto>> apiResponseDTO1=ApiResponseDTO.<List<EventResponseDto>>builder()
                 .success(true)
                 .message("Event data fetched successfully")
@@ -92,6 +94,7 @@ public class EventCrudServiceImpl implements EventCrudService {
 
     @Override
     public ResponseEntity<ApiResponseDTO<?>> updateEvent(Long id, EventRequestDto dto) {
+
         Optional<Event> optionalEvent = eventRepository.findById(id);
         if (optionalEvent.isEmpty()) {
             return ResponseEntity.status(404).body(ApiResponseDTO.builder()

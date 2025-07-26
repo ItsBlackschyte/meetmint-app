@@ -5,8 +5,10 @@ import com.meetmint.meetmint_backend.Dto.UserRequestDto;
 import com.meetmint.meetmint_backend.Dto.UserResponseDto;
 import com.meetmint.meetmint_backend.Dto.ApiResponseDTO;
 import com.meetmint.meetmint_backend.Model.User;
+import com.meetmint.meetmint_backend.Repository.TicketRepository;
 import com.meetmint.meetmint_backend.Repository.UserRepository;
 import com.meetmint.meetmint_backend.Service.JwtService;
+import com.meetmint.meetmint_backend.Service.TicketService;
 import com.meetmint.meetmint_backend.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,24 +28,29 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtService jwtService;
+    private final TicketRepository ticketRepository;
+    private final TicketServiceImpl ticketService;
+
 
     @Autowired
     AuthenticationManager authenticationManager;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService, TicketRepository ticketRepository, TicketServiceImpl ticketService) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtService = jwtService;
+        this.ticketRepository = ticketRepository;
+        this.ticketService = ticketService;
     }
 
     @Override
     public ResponseEntity<ApiResponseDTO<?>> createUser(UserRequestDto userRequestDto) {
-
+        System.out.println(userRequestDto.isOrganiser());
         User user = User.builder()
                 .firstName(userRequestDto.getFirstName())
                 .lastName(userRequestDto.getLastName())
-                .isOrganiser(userRequestDto.isOrganiser())
+                .Organiser(userRequestDto.isOrganiser())
                 .password(bCryptPasswordEncoder.encode(userRequestDto.getPassword()))
                 .profilePhotoUrl(userRequestDto.getProfilePhotoUrl())
                 .email(userRequestDto.getEmail())
@@ -176,6 +183,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<ApiResponseDTO<?>> verifyUser(@RequestBody UserRequestDto loginRequest) {
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -205,6 +213,11 @@ public class UserServiceImpl implements UserService {
 
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDTO<?>> getMyBookings(UserRequestDto userRequestDto) {
+      return ticketService.getTicketByEmail(userRequestDto.getEmail());
     }
 
 

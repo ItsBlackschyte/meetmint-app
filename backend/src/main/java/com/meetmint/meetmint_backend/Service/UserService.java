@@ -11,4 +11,6 @@ public interface UserService {
     ResponseEntity<ApiResponseDTO<?>> updateUser(Long id, UserRequestDto userRequestDto,String authHeader);
     ResponseEntity<ApiResponseDTO<?>> deleteUser(Long id);
     ResponseEntity<ApiResponseDTO<?>> verifyUser(@RequestBody UserRequestDto loginRequest);
+    ResponseEntity<ApiResponseDTO<?>> getMyBookings(@RequestBody UserRequestDto userRequestDto);
+
 }

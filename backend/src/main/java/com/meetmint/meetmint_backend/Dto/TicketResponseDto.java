@@ -15,3 +15,5 @@ public class TicketResponseDto {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 }
+
+
