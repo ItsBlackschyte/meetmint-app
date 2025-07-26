@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
         User user = User.builder()
                 .firstName(userRequestDto.getFirstName())
                 .lastName(userRequestDto.getLastName())
-                .Organiser(userRequestDto.isOrganiser())
+                .organiser(userRequestDto.isOrganiser())
                 .password(bCryptPasswordEncoder.encode(userRequestDto.getPassword()))
                 .profilePhotoUrl(userRequestDto.getProfilePhotoUrl())
                 .email(userRequestDto.getEmail())

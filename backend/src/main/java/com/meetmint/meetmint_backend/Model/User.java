@@ -31,7 +31,10 @@ public class User {
     private String email ;
 
     private String password ;
-    private boolean Organiser;
+
+    @Column(name = "organiser", nullable = false)
+    private boolean organiser;
+
     private String profilePhotoUrl ;
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

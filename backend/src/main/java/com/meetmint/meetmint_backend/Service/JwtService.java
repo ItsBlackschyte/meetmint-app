@@ -1,13 +1,11 @@
 package com.meetmint.meetmint_backend.Service;
 
-import com.meetmint.meetmint_backend.Dto.UserRequestDto;
 import com.meetmint.meetmint_backend.Model.User;
 import com.meetmint.meetmint_backend.Repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -19,8 +17,6 @@ import java.util.function.Function;
 public class JwtService {
 
     private final UserRepository userRepository;
-
-    private String secreteKey=null;
 
     public JwtService( UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -49,7 +45,7 @@ public class JwtService {
     }
     public String getSecreteKey()
     {
-        return secreteKey="CX0PH373LibivzYlzkQAjNKuaHFOyZCTeY7b6vwq+So=";
+        return "CX0PH373LibivzYlzkQAjNKuaHFOyZCTeY7b6vwq+So=";
     }
 
     public String extractUserName(String token) {
