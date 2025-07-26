@@ -1,11 +1,14 @@
 package com.meetmint.meetmint_backend.Model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import jakarta.validation.constraints.*;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -23,8 +26,6 @@ public class User {
     @NotBlank
     private String lastName ;
 
-
-
     @Email
     @Column(unique = true, nullable = false)
     private String email ;
@@ -33,4 +34,7 @@ public class User {
     private boolean Organiser;
     private String profilePhotoUrl ;
 
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference  // <-- Add this
+    private List<Event> events;
 }

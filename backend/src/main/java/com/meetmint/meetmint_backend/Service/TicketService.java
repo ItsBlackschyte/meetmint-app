@@ -15,7 +15,7 @@ public interface TicketService {
     ResponseEntity<ApiResponseDTO<?>> getAllTicket();
     ResponseEntity<ApiResponseDTO<?>> getTicketByEmail(String email);
     //    ResponseEntity<ApiResponseDTO<?>> updateTicketById(Long id, TicketRequestDto ticketRequestDto,String authHeader);
-//    ResponseEntity<ApiResponseDTO<?>> deleteTicketById(Long id);
+
 
 }
 

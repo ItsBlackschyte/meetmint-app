@@ -18,4 +18,5 @@ public class EventResponseDto {
     private double price;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+
 }

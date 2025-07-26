@@ -1,9 +1,8 @@
 package com.meetmint.meetmint_backend.Model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +11,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -48,4 +48,8 @@ public class Event {
     @Future
     private LocalDateTime endTime ;
 
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    @JsonBackReference  // <-- Add this
+    private User createdBy;
 }

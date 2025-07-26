@@ -30,4 +30,10 @@ public class TicketController {
     {
         return ticketService.getAllTicket();
     }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<ApiResponseDTO<?>> getTicketByEmail(@PathVariable  String email){
+        return  ticketService.getTicketByEmail(email);
+    }
+
 }

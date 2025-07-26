@@ -1,5 +1,6 @@
 package com.meetmint.meetmint_backend.Service.Impl;
 
+
 import com.meetmint.meetmint_backend.Dto.*;
 import com.meetmint.meetmint_backend.Model.Event;
 import com.meetmint.meetmint_backend.Model.Ticket;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -34,6 +36,7 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public ResponseEntity<ApiResponseDTO<?>> createTicket(TicketRequestDto ticketRequestDto) {
+
         Event event = eventRepository.findById(ticketRequestDto.getEventId())
                 .orElseThrow(() -> new RuntimeException("Event not found"));
 
@@ -46,17 +49,19 @@ public class TicketServiceImpl implements TicketService {
         }
         User user = userRepository.findById(ticketRequestDto.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        
 
         Ticket ticket=Ticket.builder()
-                .holderName(ticketRequestDto.getHolderName())
-                .holderEmail(ticketRequestDto.getHolderEmail())
+                .holderName(user.getFirstName()+" "+user.getLastName())
+                .holderEmail(user.getEmail())
                 .event(event)
                 .user(user)
-                .ticketPrice(ticketRequestDto.getTicketPrice())
-                .startTime(ticketRequestDto.getStartTime())
-                .endTime(ticketRequestDto.getEndTime())
-                .eventTitle(ticketRequestDto.getEventTitle())
+                .ticketPrice(event.getPrice())
+                .startTime(event.getStartTime())
+                .endTime(event.getEndTime())
+                .eventTitle(event.getTitle())
                 .build();
+
 
         ticketRepository.save(ticket);
         event.setTicketBooked(event.getTicketBooked()+1);
@@ -69,6 +74,7 @@ public class TicketServiceImpl implements TicketService {
                 .build();
         return ResponseEntity.ok(apiResponseDTO);
     }
+
 
     @Override
     public ResponseEntity<ApiResponseDTO<?>> getTicketById(@PathVariable Long id) {
@@ -104,15 +110,17 @@ public class TicketServiceImpl implements TicketService {
             return ResponseEntity.status(503).body(apiResponseDTO);
         }
 
-
-
-
-
     }
 
     @Override
     public ResponseEntity<ApiResponseDTO<?>> getTicketByEmail(String email) {
-        return null;
+        List<Ticket> myTickets=ticketRepository.findByHolderEmail(email);
+        ApiResponseDTO<List<Ticket>>apiResponseDTO=ApiResponseDTO.<List<Ticket>>builder()
+                .message("All tickets are fetched ")
+                .success(true)
+                .data(myTickets)
+                .build();
+        return ResponseEntity.ok(apiResponseDTO);
     }
 
 

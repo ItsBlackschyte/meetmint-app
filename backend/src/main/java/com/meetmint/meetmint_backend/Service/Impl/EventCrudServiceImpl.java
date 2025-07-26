@@ -1,19 +1,23 @@
 package com.meetmint.meetmint_backend.Service.Impl;
 
+import com.meetmint.meetmint_backend.CustomUserDetails;
 import com.meetmint.meetmint_backend.Dto.EventRequestDto;
 import com.meetmint.meetmint_backend.Dto.EventResponseDto;
 import com.meetmint.meetmint_backend.Dto.ApiResponseDTO;
 import com.meetmint.meetmint_backend.Model.Event;
 import com.meetmint.meetmint_backend.Model.User;
 import com.meetmint.meetmint_backend.Repository.EventRepository;
+import com.meetmint.meetmint_backend.Repository.UserRepository;
 import com.meetmint.meetmint_backend.Service.EventCrudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,10 +27,26 @@ import java.util.stream.Collectors;
 public class EventCrudServiceImpl implements EventCrudService {
 
     private final EventRepository eventRepository;
-
+    private final UserRepository userRepository;
 
     @Override
     public ResponseEntity<ApiResponseDTO<?>> createEvent(EventRequestDto dto) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        boolean isOrganiser = customUserDetails.getRole();
+        if (!isOrganiser) {
+            ApiResponseDTO<String> apiResponseDTO = ApiResponseDTO.<String>builder()
+                    .success(false)
+                    .message("Not Authorize to visit this route")
+                    .build();
+            return ResponseEntity.ok(apiResponseDTO);
+        }
+
+        User user = userRepository.findByEmail(customUserDetails.getUsername());
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
         Event event = Event.builder()
                 .title(dto.getTitle())
                 .tag(dto.getTag())
@@ -37,32 +57,41 @@ public class EventCrudServiceImpl implements EventCrudService {
                 .price(dto.getPrice())
                 .startTime(dto.getStartTime())
                 .endTime(dto.getEndTime())
+                .createdBy(user)
                 .build();
-         try {
-             Event saved = eventRepository.save(event);
 
-             ApiResponseDTO<Event> apiResponseDTO= ApiResponseDTO.<Event>builder()
-                     .success(true)
-                     .message("Event Create successfully")
-                     .data(saved)
-                     .build();
+        try {
+            Event saved = eventRepository.save(event);
 
-             return ResponseEntity.ok(apiResponseDTO);
-         }catch (Exception exception)
-         {
-             ApiResponseDTO<String> apiResponseDTO= ApiResponseDTO.<String>builder()
-                     .success(false)
-                     .message(exception.getMessage())
-                     .build();
-             return ResponseEntity.status(403).body(apiResponseDTO);
-         }
+            // Optionally add event to user's event list (maintain both sides)
+            if (user.getEvents() == null) {
+                user.setEvents(new ArrayList<>());
+            }
+            user.getEvents().add(saved);
+            userRepository.save(user);
 
+            ApiResponseDTO<Event> apiResponseDTO = ApiResponseDTO.<Event>builder()
+                    .success(true)
+                    .message("Event created successfully")
+                    .data(saved)
+                    .build();
+
+            return ResponseEntity.ok(apiResponseDTO);
+
+        } catch (Exception exception) {
+            ApiResponseDTO<String> apiResponseDTO = ApiResponseDTO.<String>builder()
+                    .success(false)
+                    .message(exception.getMessage())
+                    .build();
+            return ResponseEntity.status(403).body(apiResponseDTO);
+        }
     }
 
 
 
     @Override
     public ResponseEntity<ApiResponseDTO<?>> getAllEvents(@RequestHeader(value = "Authorization", required = false) String authHeader) {
+
         List<EventResponseDto> events= eventRepository.findAll().stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
@@ -95,6 +124,7 @@ public class EventCrudServiceImpl implements EventCrudService {
     @Override
     public ResponseEntity<ApiResponseDTO<?>> updateEvent(Long id, EventRequestDto dto) {
 
+
         Optional<Event> optionalEvent = eventRepository.findById(id);
         if (optionalEvent.isEmpty()) {
             return ResponseEntity.status(404).body(ApiResponseDTO.builder()
@@ -104,6 +134,7 @@ public class EventCrudServiceImpl implements EventCrudService {
         }
 
         Event event = optionalEvent.get();
+
 
         if (dto.getTitle() != null) event.setTitle(dto.getTitle());
         if (dto.getDescription() != null) event.setDescription(dto.getDescription());
@@ -161,6 +192,11 @@ public ResponseEntity<ApiResponseDTO<?>> getEventByTag(@PathVariable String tag)
     return ResponseEntity.status(200).body(apiResponseDTO);
 }
 
+    @Override
+    public ResponseEntity<ApiResponseDTO<?>> getEventTicketAvailibility(String tag) {
+        return null;
+    }
+
     private EventResponseDto mapToDto(Event event) {
         return EventResponseDto.builder()
                 .id(event.getId())
@@ -174,6 +210,5 @@ public ResponseEntity<ApiResponseDTO<?>> getEventByTag(@PathVariable String tag)
                 .endTime(event.getEndTime())
                 .build();
     }
-
 
 }

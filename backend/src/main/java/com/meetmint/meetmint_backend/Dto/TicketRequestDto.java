@@ -13,13 +13,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class TicketRequestDto {
-    private Long id;
-    private String holderName;
-    private String holderEmail;
     private Long eventId;
     private Long userId;
-    private String eventTitle;
-    private double ticketPrice;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
 }

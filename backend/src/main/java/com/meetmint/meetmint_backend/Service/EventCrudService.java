@@ -21,4 +21,7 @@ public interface EventCrudService {
 
     ResponseEntity<ApiResponseDTO<?>> deleteEvent(Long id);
     ResponseEntity<ApiResponseDTO<?>>  getEventByTag(@PathVariable String tag);
+
+    ResponseEntity<ApiResponseDTO<?>>  getEventTicketAvailibility(@PathVariable String tag);
+
 }
