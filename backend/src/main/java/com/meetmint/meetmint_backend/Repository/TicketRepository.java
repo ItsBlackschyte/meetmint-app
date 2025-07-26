@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface TicketRepository extends JpaRepository<Ticket, Long> {
    List<Ticket> findByHolderEmail(String email);
+   List<Ticket> findByHolderEmailOrderByCreatedAtDesc(String email);
 }

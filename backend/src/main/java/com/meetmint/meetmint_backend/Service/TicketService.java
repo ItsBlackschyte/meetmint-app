@@ -14,8 +14,8 @@ public interface TicketService {
     ResponseEntity<ApiResponseDTO<?>> getTicketById(@PathVariable Long id );
     ResponseEntity<ApiResponseDTO<?>> getAllTicket();
     ResponseEntity<ApiResponseDTO<?>> getTicketByEmail(String email);
-    //    ResponseEntity<ApiResponseDTO<?>> updateTicketById(Long id, TicketRequestDto ticketRequestDto,String authHeader);
-
-
+    ResponseEntity<ApiResponseDTO<?>> checkTicketAvailibilityByEventId(@PathVariable long id);
+    ResponseEntity<ApiResponseDTO<?>> getMyTickets();
+    ResponseEntity<ApiResponseDTO<?>> getMyEventRegister();
 }
 

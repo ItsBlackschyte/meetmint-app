@@ -17,6 +17,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -216,8 +217,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<ApiResponseDTO<?>> getMyBookings(UserRequestDto userRequestDto) {
-      return ticketService.getTicketByEmail(userRequestDto.getEmail());
+    public ResponseEntity<ApiResponseDTO<?>> getMyBookings() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+            String email = userDetails.getUsername();
+
+            return ticketService.getTicketByEmail(email);
+        } catch (Exception e) {
+            e.printStackTrace(); // Helpful for debugging
+            ApiResponseDTO<String> response = ApiResponseDTO.<String>builder()
+                    .success(false)
+                    .message("something wents wrong")
+                    .data(null)
+                    .build();
+            return ResponseEntity.status(503).body(response);
+        }
     }
 
 

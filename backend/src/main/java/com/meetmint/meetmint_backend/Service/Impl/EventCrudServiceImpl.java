@@ -192,10 +192,7 @@ public ResponseEntity<ApiResponseDTO<?>> getEventByTag(@PathVariable String tag)
     return ResponseEntity.status(200).body(apiResponseDTO);
 }
 
-    @Override
-    public ResponseEntity<ApiResponseDTO<?>> getEventTicketAvailibility(String tag) {
-        return null;
-    }
+
 
     private EventResponseDto mapToDto(Event event) {
         return EventResponseDto.builder()

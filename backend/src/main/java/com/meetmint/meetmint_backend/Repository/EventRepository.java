@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
-    List<Event>  findByTag(String tag);
-
+    List<Event> findByTag(String tag);
+    List<Event> findByCreatedByEmail(String email);
 }

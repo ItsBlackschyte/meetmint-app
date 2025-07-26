@@ -36,4 +36,15 @@ public class TicketController {
         return  ticketService.getTicketByEmail(email);
     }
 
+    @GetMapping("/eventTicketCheck/{id}")
+    public ResponseEntity<ApiResponseDTO<?>> checkTicketAvailibilityByEventId(@PathVariable Long id){
+        return ticketService.checkTicketAvailibilityByEventId(id);
+    }
+
+    @GetMapping("/recentBooking")
+    public ResponseEntity<ApiResponseDTO<?>> getMyRecentTicketBooking(){
+        return ticketService.getMyTickets();
+    }
+
+
 }

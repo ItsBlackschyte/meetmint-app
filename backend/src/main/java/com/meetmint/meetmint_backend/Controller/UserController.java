@@ -42,6 +42,10 @@ public class UserController {
         return userService.createUser(userRequestDto);
     }
 
+    @GetMapping()
+    public ResponseEntity<ApiResponseDTO<?>> getMyBooking(){
+        return userService.getMyBookings();
+    }
 
     @PostMapping("/login")
     public ResponseEntity<ApiResponseDTO<?>> loginUser(@RequestBody UserRequestDto loginRequest) {
@@ -52,6 +56,7 @@ public class UserController {
     public ResponseEntity<ApiResponseDTO<?>> getUserById(@RequestBody UserRequestDto emailPassword) {
         return userService.getUserByEmailId(emailPassword);
     }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponseDTO<?>>updateUser(@PathVariable Long id,@RequestBody @Valid UserRequestDto oldUser,@RequestHeader("Authorization") String authHeader) {

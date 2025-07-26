@@ -1,6 +1,7 @@
 package com.meetmint.meetmint_backend.Service.Impl;
 
 
+import com.meetmint.meetmint_backend.CustomUserDetails;
 import com.meetmint.meetmint_backend.Dto.*;
 import com.meetmint.meetmint_backend.Model.Event;
 import com.meetmint.meetmint_backend.Model.Ticket;
@@ -11,6 +12,8 @@ import com.meetmint.meetmint_backend.Repository.UserRepository;
 import com.meetmint.meetmint_backend.Service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -114,11 +117,70 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     public ResponseEntity<ApiResponseDTO<?>> getTicketByEmail(String email) {
+
         List<Ticket> myTickets=ticketRepository.findByHolderEmail(email);
         ApiResponseDTO<List<Ticket>>apiResponseDTO=ApiResponseDTO.<List<Ticket>>builder()
                 .message("All tickets are fetched ")
                 .success(true)
                 .data(myTickets)
+                .build();
+        return ResponseEntity.ok(apiResponseDTO);
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDTO<?>> checkTicketAvailibilityByEventId(@PathVariable long id) {
+
+           Optional<Event> eventInfo=eventRepository.findById(id);
+           if(eventInfo.isEmpty())
+           {
+               ApiResponseDTO apiResponseDTO=ApiResponseDTO.<String>builder()
+                       .message("Event Not exist")
+                       .success(false)
+                       .build();
+               return ResponseEntity.status(404).body(apiResponseDTO);
+           }
+           Event event=eventInfo.get();
+
+           if(event.getTicketBooked().equals(event.getTicketCount()))
+           {
+               ApiResponseDTO apiResponseDTO=ApiResponseDTO.<String>builder()
+                       .message("All Tickets are booked")
+                       .success(false)
+                       .build();
+               return ResponseEntity.status(409).body(apiResponseDTO);
+           }
+           ApiResponseDTO<Integer>apiResponseDTO= ApiResponseDTO.<Integer>builder()
+                   .data(event.getTicketCount()-event.getTicketBooked())
+                   .message("Tickets Availiblty fatched")
+                   .success(true)
+                   .build();
+           return ResponseEntity.ok(apiResponseDTO);
+    }
+
+    public ResponseEntity<ApiResponseDTO<?>> getMyTickets() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        String email = userDetails.getUsername();
+        List<Ticket> tickets = ticketRepository.findByHolderEmailOrderByCreatedAtDesc(email);
+        ApiResponseDTO<List<Ticket>> response = ApiResponseDTO.<List<Ticket>>builder()
+                .success(true)
+                .message("Fetched tickets in reverse order")
+                .data(tickets)
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDTO<?>> getMyEventRegister() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        String email = userDetails.getUsername();
+        List<Event>events=eventRepository.findByCreatedByEmail(email);
+        ApiResponseDTO<List<Event>>apiResponseDTO=ApiResponseDTO.<List<Event>>builder()
+                .message("My event fetched ")
+                .success(true)
+                .data(events)
                 .build();
         return ResponseEntity.ok(apiResponseDTO);
     }
