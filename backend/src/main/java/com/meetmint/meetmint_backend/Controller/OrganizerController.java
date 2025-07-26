@@ -1,7 +1,6 @@
 package com.meetmint.meetmint_backend.Controller;
 
 import com.meetmint.meetmint_backend.Dto.EventRequestDto;
-import com.meetmint.meetmint_backend.Dto.EventResponseDto;
 import com.meetmint.meetmint_backend.Dto.ApiResponseDTO;
 import com.meetmint.meetmint_backend.Service.EventCrudService;
 import com.meetmint.meetmint_backend.Service.TicketService;
@@ -9,8 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")

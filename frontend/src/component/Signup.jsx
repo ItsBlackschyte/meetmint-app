@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import Spline from '@splinetool/react-spline';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import LeftSideModel from './LeftSideModel';
 import axios from '../utils/axiosInstance';
-import { useNavigate } from 'react-router-dom';
+
 const Signup = () => {
-  const [role, setRole] = useState('attendee');
-const [formData, setFormData] = useState({
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
@@ -16,31 +17,32 @@ const [formData, setFormData] = useState({
     organiser: false,
   });
 
-  const navigate = useNavigate();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-const handleChange = (e) => {
-  const { name, value } = e.target;
+    if (name === 'role') {
+      setFormData((prev) => ({
+        ...prev,
+        organiser: value === 'organizer',
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
 
-  if (name === 'role') {
-    setFormData((prev) => ({
-      ...prev,
-      organiser: value === 'organizer', 
-    }));
-  } else {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  }
-};
   const handleSubmit = async (e) => {
     e.preventDefault();
-   console.log(formData);
+    console.log(formData);
+
     try {
       const res = await axios.post('api/users/register', formData);
 
       if (res.data.success) {
         toast.success('Signup successful!');
+        // ✅ Redirect to login page after signup
         navigate('/login');
       } else {
         toast.error(res.data.message || 'Signup failed');
@@ -51,9 +53,8 @@ const handleChange = (e) => {
     }
   };
 
-
   return (
- <div className="flex h-screen w-screen overflow-hidden">
+    <div className="flex h-screen w-screen overflow-hidden">
       <div className="w-1/2 h-full">
         <LeftSideModel />
       </div>
