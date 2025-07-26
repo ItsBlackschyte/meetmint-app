@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate , useLocation} from "react-router-dom";
 import Profile from "./Profile"; 
+import Cookies from 'js-cookie';
+import { FaUserCircle } from 'react-icons/fa';
+import { FiLogOut } from 'react-icons/fi';
+
+
+
+
+
 const debounce = (func, wait) => {
   let timeout;
   return (...args) => {
@@ -15,6 +23,8 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const myLoc = useLocation();
+  
 
   const debouncedSearch = useRef(
     debounce((query) => {
@@ -24,10 +34,17 @@ const Navbar = () => {
     }, 300)
   ).current;
 
+  // useEffect(() => {
+  //   const user = localStorage.getItem("user");
+  //   setIsLoggedIn(!!user);
+  // }, []);
+
+
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    setIsLoggedIn(!!user);
-  }, []);
+    const token = Cookies.get("auth_token");
+    setIsLoggedIn(!!token);
+    }, [myLoc.pathname]);
+
 
   const handleSearchChange = (e) => {
     const query = e.target.value;
@@ -115,8 +132,6 @@ const Navbar = () => {
   useEffect(()=>{
     fetchData();
   } , [input]);
-
-  
 
   return (
     <>
@@ -208,8 +223,27 @@ const Navbar = () => {
 
       <div className="hidden md:flex items-center gap-3">
         {isLoggedIn ? (
-          <Profile />
-        ) : (
+    <>
+      <Link to="/profile">
+        <img
+          src="https://www.w3schools.com/howto/img_avatar.png" // Replace with dynamic profilePhotoUrl if you have it
+          alt="Profile"
+          className="w-9 h-9 rounded-full object-cover border-2 border-indigo-500 hover:scale-105 transition-transform"
+        />
+      </Link>
+      <button
+        onClick={() => {
+          Cookies.remove("auth_token");
+          setIsLoggedIn(false);
+          navigate("/login");
+        }}
+        className="flex items-center gap-1 text-sm text-red-500 border border-red-400 px-3 py-1 rounded-full hover:bg-red-100 transition"
+      >
+        <FiLogOut className="text-base" />
+        Logout
+      </button>
+    </>
+  ): (
           <Link
             to="/login"
             className="px-4 py-2 border border-gray-300 rounded-full hover:bg-gray-100 transition-colors text-gray-700 font-medium text-sm"
