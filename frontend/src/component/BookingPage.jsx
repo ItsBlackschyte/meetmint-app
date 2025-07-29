@@ -6,6 +6,8 @@ import { toast } from 'react-hot-toast';
 import jsPDF from "jspdf";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const generateTicketPDF = (event, tickets, userName) => {
   const doc = new jsPDF();
   const eventDate = new Date(event.startTime).toLocaleDateString();
@@ -35,7 +37,7 @@ const BookingPage = () => {
   const [userName, setUserName] = useState("");
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/api/event/${id}`)
+    axios.get(`${BACKEND_URL}/api/event/${id}`)
       .then((res) => {
         setEvent(res.data.data);
         setLoading(false);
@@ -48,7 +50,7 @@ const BookingPage = () => {
     const fetchUser = async () => {
       try {
         const token = Cookies.get("auth_token") || localStorage.getItem("auth_token");
-        const userRes = await axios.get("http://localhost:8080/api/users/me", {
+        const userRes = await axios.get(`${BACKEND_URL}/api/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = userRes.data.data;
@@ -69,7 +71,7 @@ const BookingPage = () => {
     try {
       for (let i = 0; i < tickets; i++) {
         await axios.post(
-          "http://localhost:8080/api/ticket",
+          `${BACKEND_URL}/api/ticket`,
           { eventId: id, userId, paymentId: paymentDetails.id },
           {
             headers: {

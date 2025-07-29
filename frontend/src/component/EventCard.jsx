@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { CalendarIcon, MapPinIcon } from "@heroicons/react/24/outline";
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const EventCard = ({ id, title, date, location, price, image ,totalTickets ,ticketsAvailable}) => {
   const navigate = useNavigate();

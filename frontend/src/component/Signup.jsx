@@ -42,7 +42,7 @@ const Signup = () => {
 
       if (res.data.success) {
         toast.success('Signup successful!');
-        // ✅ Redirect to login page after signup
+        
         navigate('/login');
       } else {
         toast.error(res.data.message || 'Signup failed');

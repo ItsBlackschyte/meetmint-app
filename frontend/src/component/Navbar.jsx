@@ -7,7 +7,7 @@ import { FiLogOut } from 'react-icons/fi';
 import axios from "../utils/axiosInstance";
 
 
-
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 
 
@@ -74,7 +74,7 @@ const Navbar = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/event');
+        const res = await axios.get(`${BACKEND_URL}/api/event`);
         if (res.data.success) {
           setEvents(res.data.data); // Store fetched events
         }

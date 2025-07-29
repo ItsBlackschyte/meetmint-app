@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "../utils/axiosInstance";
 import EventCard from "./EventCard";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const EventPool = () => {
   const [events, setEvents] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -10,7 +12,7 @@ const EventPool = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await axios.get("http://localhost:8080/api/event");
+        const res = await axios.get(`${BACKEND_URL}/api/event`);
         if (res.data.success) {
           setEvents(res.data.data); // assuming data is in res.data.data
         } else {

@@ -6,6 +6,8 @@ import Cookies from 'js-cookie';
 import { useState , useEffect} from 'react';
 import toast from 'react-hot-toast';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

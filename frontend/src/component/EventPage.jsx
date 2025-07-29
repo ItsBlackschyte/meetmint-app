@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "../utils/axiosInstance";
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const EventPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -10,7 +12,7 @@ const EventPage = () => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/api/event/${id}`)
+      .get(`${BACKEND_URL}/api/event/${id}`)
       .then((res) => {
         setEvent(res.data.data);
         setLoading(false);
