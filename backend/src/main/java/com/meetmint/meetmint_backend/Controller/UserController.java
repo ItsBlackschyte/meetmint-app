@@ -52,6 +52,12 @@ public class UserController {
           return userService.verifyUser(loginRequest);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponseDTO<?>> getCurrentUser(@RequestHeader("Authorization") String authHeader) {
+        return userService.getCurrentUser(authHeader);
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponseDTO<?>> getUserById(@RequestBody UserRequestDto emailPassword) {
         return userService.getUserByEmailId(emailPassword);
@@ -64,8 +70,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public  ResponseEntity<ApiResponseDTO<?>>deleteUser(@PathVariable Long id) {
-        return  userService.deleteUser(id);
+    public  ResponseEntity<ApiResponseDTO<?>>deleteUser(@PathVariable Long id,@RequestHeader("Authorization") String authHeader) {
+        return  userService.deleteUser(id,authHeader);
     }
 
 

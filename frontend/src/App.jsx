@@ -3,6 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from './component/Navbar';
 import Footer from './component/Footer';
 import Profile from './component/Profile';
+import ProtectedRoute from './component/ProtectedRoute';
+
 
 const HeroSection = lazy(() => import('./component/HeroSection'));
 const EventPool = lazy(() => import('./component/EventPool'));
@@ -67,12 +69,22 @@ const App = () => {
                   </>
                 }
               />
-              <Route
+              {/* <Route
                 path="/events/:id"
                 element={
                   <section aria-label="Event Details">
                     <EventPage />
                   </section>
+                }
+              /> */}
+              <Route
+                path="/events/:id"
+                element={
+                  <ProtectedRoute>
+                    <section aria-label="Event Details">
+                      <EventPage />
+                    </section>
+                  </ProtectedRoute>
                 }
               />
               <Route
@@ -83,14 +95,26 @@ const App = () => {
                   </section>
                 }
               />
-              <Route
+              {/* <Route
                 path="/book/:id"
                 element={
                   <section aria-label="Booking Page">
                     <BookingPage />
                   </section>
                 }
+              /> */}
+
+              <Route
+                path="/book/:id"
+                element={
+                  <ProtectedRoute>
+                    <section aria-label="Booking Page">
+                      <BookingPage />
+                    </section>
+                  </ProtectedRoute>
+                }
               />
+
               <Route
                 path="/login"
                 element={
@@ -107,14 +131,26 @@ const App = () => {
                   </section>
                 }
               />
-                  <Route
+                  {/* <Route
                 path="/profile"
                 element={
                   <section aria-label="Profile page">
                     <Profile />
                   </section>
                 }
+              /> */}
+
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <section aria-label="Profile Page">
+                      <Profile />
+                    </section>
+                  </ProtectedRoute>
+                }
               />
+
               <Route
                 path="*"
                 element={

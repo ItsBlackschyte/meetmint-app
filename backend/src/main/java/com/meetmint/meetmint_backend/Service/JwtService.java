@@ -1,11 +1,13 @@
 package com.meetmint.meetmint_backend.Service;
 
+import com.meetmint.meetmint_backend.Dto.UserRequestDto;
 import com.meetmint.meetmint_backend.Model.User;
 import com.meetmint.meetmint_backend.Repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -18,12 +20,14 @@ public class JwtService {
 
     private final UserRepository userRepository;
 
+    private String secreteKey=null;
+
     public JwtService( UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     public String generateToken(User UserEmailPassword) {
-        User user= userRepository.findByEmail( UserEmailPassword.getEmail());
+        User user= userRepository.findByEmail( UserEmailPassword.getEmail()).get();
         HashMap<String,Object>claims=new HashMap<>();
         claims.put("role", user.isOrganiser());
         return Jwts
@@ -45,7 +49,7 @@ public class JwtService {
     }
     public String getSecreteKey()
     {
-        return "CX0PH373LibivzYlzkQAjNKuaHFOyZCTeY7b6vwq+So=";
+        return secreteKey="CX0PH373LibivzYlzkQAjNKuaHFOyZCTeY7b6vwq+So=";
     }
 
     public String extractUserName(String token) {
@@ -85,6 +89,10 @@ public class JwtService {
 
     private Date extracExpiration(String token) {
         return extractClaims(token,Claims::getExpiration);
+    }
+
+    public String extractEmail(String token) {
+        return extractUserName(token); // Subject of the token is email
     }
 
 }

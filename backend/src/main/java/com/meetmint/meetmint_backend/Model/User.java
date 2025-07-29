@@ -31,13 +31,12 @@ public class User {
     private String email ;
 
     private String password ;
-
-    @Column(name = "organiser", nullable = false)
-    private boolean organiser;
-
+    private boolean Organiser;
     private String profilePhotoUrl ;
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference  // <-- Add this
+    @JsonManagedReference
     private List<Event> events;
+
+
 }
