@@ -5,6 +5,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import LeftSideModel from './LeftSideModel';
 import axios from '../utils/axiosInstance';
 
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const Signup = () => {
   const navigate = useNavigate();
 
@@ -37,12 +39,14 @@ const Signup = () => {
     e.preventDefault();
     console.log(formData);
 
+
+
     try {
-      const res = await axios.post('api/users/register', formData);
+      const res = await axios.post(`${BACKEND_URL}/api/users/register`, formData);
 
       if (res.data.success) {
         toast.success('Signup successful!');
-        
+
         navigate('/login');
       } else {
         toast.error(res.data.message || 'Signup failed');
